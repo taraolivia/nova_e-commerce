@@ -4,19 +4,16 @@ import { useState } from "react";
 import SearchBar from "./SearchBar";
 import FilterSidebar from "./FilterSidebar";
 import ProductCard from "./ProductCard";
-
-const mockProducts = [
-  { id: "1", title: "Product A" },
-  { id: "2", title: "Product B" },
-  { id: "3", title: "Product C" },
-  { id: "4", title: "Product D" },
-];
+import { useProducts } from "@/app/hooks/useProducts";
+import type { Product } from "@/app/types/Types"; // adjust path if needed
 
 export default function AllProducts() {
   const [search, setSearch] = useState("");
+  const { products, loading, error } = useProducts();
 
-  const filtered = mockProducts.filter((p) =>
-    p.title.toLowerCase().includes(search.toLowerCase())
+  // Filter based on search
+  const filtered = products.filter((product: Product) =>
+    product.title.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -26,9 +23,20 @@ export default function AllProducts() {
 
         <div className="w-full">
           <SearchBar value={search} onChange={setSearch} />
+
+          {loading && <p>Loading...</p>}
+          {error && <p className="text-red-600">{error}</p>}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((product) => (
-              <ProductCard key={product.id} title={product.title} />
+            {filtered.map((product: Product) => (
+              <ProductCard
+                key={product.id}
+                id={product.id}
+                title={product.title}
+                image={product.image}
+                price={product.price}
+                discountedPrice={product.discountedPrice}
+              />
             ))}
           </div>
         </div>
