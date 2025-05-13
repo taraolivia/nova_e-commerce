@@ -10,29 +10,33 @@ import BlobLayer from "./BlobLayer";
 export default function HeroSection() {
   const { products, loading } = useProducts();
   const [activeIndex, setActiveIndex] = useState(0);
+  
 
   // Cycle through products every 8 seconds
   useEffect(() => {
     const iv = setInterval(() => {
       setActiveIndex((i) => (i + 1) % products.length);
-    }, 8000);
+    }, 6000);
     return () => clearInterval(iv);
   }, [products.length]);
 
   if (loading || products.length === 0) return null;
   const product = products[activeIndex];
+  const categoryKey = product.tags?.[0]?.toLowerCase() || "default";
+
+    
 
   return (
     <>
 
       <section
-        className="relative overflow-hidden w-full h-[80vh]"
+        className="relative overflow-visible w-full h-[80vh] bg-yellow-50"
         style={{
           transition: "background-image 0.7s ease-in-out",
         }}
       >
         {/* BlobLayer morphing blobs behind the content */}
-        <BlobLayer />
+        <BlobLayer category={categoryKey} step={activeIndex} />
 
         {/* Hero content */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 flex flex-col md:flex-row h-full items-end justify-between gap-8">

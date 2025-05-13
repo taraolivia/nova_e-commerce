@@ -1,64 +1,190 @@
-// components/BlobLayer.tsx
 "use client";
 
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { motion, useMotionValue, useTransform, animate } from "motion/react";
-import { interpolate } from "motion/react";
 
-// 1) Your blob SVG outlines (e.g. exported from Blobmaker.app)
-const blobPaths = [
-  "M36.6,-42.6C45.8,-33.4,47.9,-16.7,45.1,-1.4C42.2,13.9,34.4,27.8,23.2,36.7C12,45.6,-2.8,49.7,-17.5,48C-32.2,46.3,-46.9,38.8,-54.9,25.4C-62.9,12,-64.1,-6.1,-56.3,-21.3C-48.5,-36.4,-31.8,-48.5,-14.3,-52.3C3.2,-56.1,19.3,-51.7,36.6,-42.6Z",
-  "M32.4,-36.7C42.4,-30.2,51.6,-21.6,54.9,-10.5C58.1,0.6,55.4,13.3,49.8,24.2C44.3,35.2,35.9,44.3,24.2,50.8C12.5,57.3,-2.6,61.1,-16.4,59.4C-30.2,57.7,-42.9,50.6,-51.7,39.1C-60.6,27.6,-65.7,11.8,-63.8,-2.2C-61.9,-16.2,-53.1,-29.3,-41.1,-37.8C-29.2,-46.4,-14.6,-50.4,-0.1,-50.3C14.4,-50.1,28.9,-45.2,32.4,-36.7Z",
-  "M26.1,-31.4C33.8,-23.4,37.2,-11.7,38.2,0.3C39.3,12.3,38.1,24.7,30.9,33.4C23.7,42.1,10.8,47.1,-1.3,48.3C-13.5,49.6,-27.1,47.2,-35.3,37.8C-43.4,28.3,-46.1,11.9,-42.9,-2.3C-39.7,-16.6,-30.7,-28.7,-19.6,-36.8C-8.5,-44.9,4.7,-49.1,16.2,-45.5C27.7,-41.9,37.7,-30.3,26.1,-31.4Z",
-];
+type BlobConfig = {
+  color: string;
+  position: { x: string; y: string };
+  shape: string;
+};
 
-export default function BlobLayer() {
-  // 2) MotionValue to drive the morph
-  const progress = useMotionValue(0);
-
-  // 3) Interpolate between blobPaths
-  const pathD = useTransform(
-    progress,
-    blobPaths.map((_, i) => i),
-    blobPaths,
-    { mixer: (from, to) => interpolate(from, to, { maxSegmentLength: 0.1 }) }
-  );
-
-  // 4) Cycle every 5s
-  const [pathIndex, setPathIndex] = useState(0);
-  useEffect(() => {
-    const controls = animate(progress, 1, {
-      duration: 0.8,
-      ease: "easeInOut",
-      onComplete() {
-        progress.set(0);
-        setPathIndex((i) => (i + 1) % blobPaths.length);
+const basePresets: Record<string, BlobConfig[]> = {
+  perfume: [
+      {
+        color: "#FFD6D6",
+        position: { x: "15%", y: "60%" },
+        shape: "M437,287Q410,324,390,370Q370,416,324,438Q278,460,234,463Q190,466,144,443Q98,420,67,379Q36,338,22,289Q8,240,27,190Q46,140,82,105Q118,70,163,45Q208,20,257,28Q306,36,353,56Q400,76,433,113Q466,150,468,195Q470,240,437,287Z",
       },
-    });
-    const timer = setTimeout(() => {
-      progress.set(0);
-      setPathIndex((i) => (i + 1) % blobPaths.length);
-    }, 5000);
-    return () => {
-      controls.stop();
-      clearTimeout(timer);
-    };
-  }, [pathIndex, progress]);
+      {
+        color: "#D6F0FF",
+        position: { x: "50%", y: "50%" },
+        shape: "M426,291Q398,342,356,375Q314,408,267,434Q220,460,177,430Q134,400,98,368Q62,336,40,293Q18,250,33,202Q48,154,82,112Q116,70,165,51Q214,32,261,44Q308,56,359,66Q410,76,438,118Q466,160,460,205Q454,250,426,291Z",
+      },
+      {
+        color: "#E7D6FF",
+        position: { x: "85%", y: "60%" },
+        shape: "M419,280Q388,320,357,357Q326,394,276,410Q226,426,184,410Q142,394,99,368Q56,342,50,291Q44,240,52,194Q60,148,95,114Q130,80,174,56Q218,32,267,47Q316,62,361,81Q406,100,429,140Q452,180,447,225Q442,270,419,280Z",
+      },
+    ],
+  
+    eyewear: [
+      {
+        color: "#FFD6D6",
+        position: { x: "15%", y: "60%" },
+        shape: "M437,287Q410,324,390,370Q370,416,324,438Q278,460,234,463Q190,466,144,443Q98,420,67,379Q36,338,22,289Q8,240,27,190Q46,140,82,105Q118,70,163,45Q208,20,257,28Q306,36,353,56Q400,76,433,113Q466,150,468,195Q470,240,437,287Z",
+      },
+      {
+        color: "#D6F0FF",
+        position: { x: "50%", y: "50%" },
+        shape: "M426,291Q398,342,356,375Q314,408,267,434Q220,460,177,430Q134,400,98,368Q62,336,40,293Q18,250,33,202Q48,154,82,112Q116,70,165,51Q214,32,261,44Q308,56,359,66Q410,76,438,118Q466,160,460,205Q454,250,426,291Z",
+      },
+      {
+        color: "#E7D6FF",
+        position: { x: "85%", y: "60%" },
+        shape: "M419,280Q388,320,357,357Q326,394,276,410Q226,426,184,410Q142,394,99,368Q56,342,50,291Q44,240,52,194Q60,148,95,114Q130,80,174,56Q218,32,267,47Q316,62,361,81Q406,100,429,140Q452,180,447,225Q442,270,419,280Z",
+      },
+    ],
+  
+    tech: [
+      {
+        color: "#A8DFFF",
+        position: { x: "15%", y: "70%" },
+        shape: "M426,291Q398,342,356,375Q314,408,267,434Q220,460,177,430Q134,400,98,368Q62,336,40,293Q18,250,33,202Q48,154,82,112Q116,70,165,51Q214,32,261,44Q308,56,359,66Q410,76,438,118Q466,160,460,205Q454,250,426,291Z",
+      },
+      {
+        color: "#C6FFD9",
+        position: { x: "50%", y: "50%" },
+        shape: "M440,300Q410,360,355,390Q300,420,245,440Q190,460,150,420Q110,380,85,340Q60,300,45,250Q30,200,60,150Q90,100,130,65Q170,30,225,20Q280,10,330,35Q380,60,420,100Q460,140,460,195Q460,250,440,300Z",
+      },
+      {
+        color: "#D7D8EB",
+        position: { x: "85%", y: "70%" },
+        shape: "M430,290Q410,340,370,375Q330,410,280,430Q230,450,180,430Q130,410,100,370Q70,330,60,285Q50,240,60,190Q70,140,100,100Q130,60,180,40Q230,20,280,40Q330,60,370,90Q410,120,430,160Q450,200,430,290Z",
+      },
+    ],
+  
+    toy: [
+      {
+        color: "#FFEB3B",
+        position: { x: "15%", y: "70%" },
+        shape: "M426,291Q398,342,356,375Q314,408,267,434Q220,460,177,430Q134,400,98,368Q62,336,40,293Q18,250,33,202Q48,154,82,112Q116,70,165,51Q214,32,261,44Q308,56,359,66Q410,76,438,118Q466,160,460,205Q454,250,426,291Z",
+      },
+      {
+        color: "#FF8A80",
+        position: { x: "50%", y: "50%" },
+        shape: "M440,300Q410,360,355,390Q300,420,245,440Q190,460,150,420Q110,380,85,340Q60,300,45,250Q30,200,60,150Q90,100,130,65Q170,30,225,20Q280,10,330,35Q380,60,420,100Q460,140,460,195Q460,250,440,300Z",
+      },
+      {
+        color: "#81D4FA",
+        position: { x: "85%", y: "70%" },
+        shape: "M430,290Q410,340,370,375Q330,410,280,430Q230,450,180,430Q130,410,100,370Q70,330,60,285Q50,240,60,190Q70,140,100,100Q130,60,180,40Q230,20,280,40Q330,60,370,90Q410,120,430,160Q450,200,430,290Z",
+      },
+    ],
+  };
+  
+  const blobPresets: Record<string, BlobConfig[]> = {
+    ...basePresets,
+  
+    beauty: basePresets.perfume,
+    skinCare: basePresets.perfume,
+    shampoo: basePresets.perfume,
+  
+    fashion: basePresets.eyewear,
+    bags: basePresets.eyewear,
+    shoes: basePresets.eyewear,
+    glasses: basePresets.eyewear,
+    accessories: basePresets.eyewear,
+    watches: basePresets.eyewear,
+    jewelry: basePresets.eyewear,
+    wearables: basePresets.eyewear,
+  
+    electronics: basePresets.tech,
+    audio: basePresets.tech,
+    headphones: basePresets.tech,
+    storage: basePresets.tech,
+    gaming: basePresets.tech,
+    computers: basePresets.tech,
+    peripherals: basePresets.tech,
+  
+    default: basePresets.tech,
+  };
+
+type BlobLayerProps = {
+  category: string;
+  step: number;
+};
+
+export default function BlobLayer({ category, step }: BlobLayerProps) {
+  const [hasMounted, setHasMounted] = useState(false);
+  const [currentBlobs, setCurrentBlobs] = useState<BlobConfig[]>([]);
+  
+  
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+  
+  useEffect(() => {
+    if (!hasMounted) return;
+  
+    const fallback = "default";
+    const safeCategory = typeof category === "string" && blobPresets[category] ? category : fallback;
+    const presets = blobPresets[safeCategory] ?? blobPresets[fallback];
+  
+    if (!presets) return;
+  
+    // Shuffle the blobs to force animation
+    const offset = step % presets.length;
+    const newBlobs = Array.from({ length: 3 }, (_, i) => presets[(offset + i) % presets.length]);
+  
+    setCurrentBlobs(newBlobs);
+    console.log("Blob update", category, step, newBlobs.map(b => b.color));
+
+  }, [hasMounted, category, step]);
+  
+  
+  
+  if (!hasMounted) return null;
+  
 
   return (
-    <svg
-      className="absolute inset-0 w-full h-full pointer-events-none -z-10"
-      viewBox="0 0 100 100"
-      preserveAspectRatio="xMidYMid meet"
-    >
-      <g transform="translate(50 50) scale(0.6) translate(-50 -50)">
-        <motion.path
-          d={pathD}
-          fill="#fff"
-          style={{ originX: 50, originY: 50 }}
-          className="blur-[60px] opacity-60 mix-blend-screen"
-        />
-      </g>
-    </svg>
+    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none w-full h-full">
+      {currentBlobs.map((blob, i) => (
+        <motion.svg
+
+        key={`blob-${i}`} 
+          viewBox="-150 -100 800 800" // natural blob shape
+          width={800}
+          height={800}
+          preserveAspectRatio="xMidYMid meet" // keeps shape, avoids zooming
+          className="absolute"
+          style={{
+
+            top: blob.position.y,
+            left: blob.position.x,
+            transform: "translate(-50%, -50%)",
+            filter: "blur(12px)",
+            opacity: 0.5,
+          }}
+        >
+<defs>
+  <radialGradient id={`grad-${i}`} cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stopColor={blob.color} />
+    <stop offset="100%" stopColor="#ffffff00" />
+  </radialGradient>
+</defs>
+
+<motion.path
+  initial={false}
+  animate={{ d: blob.shape, fill: blob.color }}
+  transition={{ duration: 1, ease: "easeInOut" }}
+/>
+
+
+</motion.svg>
+      ))}
+    </div>
   );
+  
+  
 }

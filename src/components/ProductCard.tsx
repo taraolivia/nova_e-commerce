@@ -1,13 +1,16 @@
 import type { Product } from "@/app/types/Types";
 import Image from "next/image";
+import Link from "next/link";
 
 
 type Props = Pick<Product, "id" | "title" | "image" | "price" | "discountedPrice">;
 
-export default function ProductCard({ title, image, price, discountedPrice }: Props) {
+export default function ProductCard({ title, image, price, discountedPrice, id }: Props) {
   const hasDiscount = discountedPrice < price;
 
   return (
+    <Link href={`/product/${id}`}>
+
     <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 flex flex-col h-full">
 <Image
   src={image.url}
@@ -34,5 +37,6 @@ export default function ProductCard({ title, image, price, discountedPrice }: Pr
         </div>
       </div>
     </div>
+    </Link>
   );
 }
