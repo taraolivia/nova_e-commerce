@@ -30,7 +30,7 @@ export default function HeroSection() {
     <>
 
       <section
-        className="relative overflow-visible w-full h-[80vh] bg-yellow-50"
+        className="relative overflow-visible w-full h-[60vh]"
         style={{
           transition: "background-image 0.7s ease-in-out",
         }}
@@ -45,22 +45,32 @@ export default function HeroSection() {
             <h1 className="text-4xl font-bold mb-4">{product.title}</h1>
             <p className="mb-6 max-w-lg">{product.description}</p>
             <Link href={`/product/${product.id}`}>
-              <span className="inline-block bg-white text-black font-medium px-6 py-2 rounded hover:bg-opacity-80 transition">
+              <span className="inline-block bg-purple-300 text-black font-medium px-6 py-2 rounded hover:bg-opacity-80 transition">
                 View Product
               </span>
             </Link>
           </div>
           {/* Image */}
           <div className="flex-1 flex items-end h-full justify-end pb-12">
-            <Image
-              src={product.image.url}
-              alt={product.image.alt || product.title}
-              width={400}
-              height={400}
-              className="object-contain max-h-full drop-shadow-xl opacity-0 transition-opacity duration-750"
-              onLoad={(e) => e.currentTarget.classList.remove("opacity-0")}
-              priority
-            />
+<Image
+  src={product.image.url}
+  alt={product.image.alt || product.title}
+  width={400}
+  height={400}
+  className="
+    object-contain
+    w-full
+    h-auto
+    max-h-[400px]
+    drop-shadow-xl
+    opacity-0
+    transition-opacity
+    duration-750
+  "
+  onLoad={(e) => e.currentTarget.classList.remove('opacity-0')}
+  priority
+/>
+
           </div>
         </div>
       </section>
