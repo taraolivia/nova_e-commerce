@@ -3,21 +3,21 @@ import Image from "next/image";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { Product } from "@/app/types/Types";
 import AddToCartButton from "@/components/AddToCartButton";
+import { notFound } from "next/navigation";
 
-async function getProduct(id: string) {
+async function getProduct(id: string): Promise<Product> {
   const res = await fetch(`https://v2.api.noroff.dev/online-shop/${id}`);
-
-  if (!res.ok) throw new Error("Failed to fetch product");
-
-  const data = await res.json();
-  return data.data;
+  if (!res.ok) return notFound();
+  const payload = await res.json();
+  return payload.data as Product;
 }
 
-export default async function ProductPage(props: { params: { id: string } }) {
-    const { id } = props.params;
-    const product: Product = await getProduct(id);
-  
-
+export default async function Page({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const product = await getProduct(params.id);
   const hasDiscount = product.price > product.discountedPrice;
   const discountPercentage = hasDiscount
     ? Math.round(((product.price - product.discountedPrice) / product.price) * 100)
